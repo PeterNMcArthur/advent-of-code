@@ -46,7 +46,6 @@ const hasCorrectNumber = ({
     x => x.length,
   );
 
-
   const part1 = testPasswords(part1Validator);
   console.log('(Part 1) number of correct passwords: ', part1(data));
 
