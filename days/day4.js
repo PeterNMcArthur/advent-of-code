@@ -4,18 +4,20 @@ const fetchData = require('../fetchData');
   const data = await fetchData(4);
   const requiredFields = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'];
 
+  const inRange = (min, max) => (val) => Number(val) >= min && Number(val) <= max;
+
   const validation = {
-    byr: (value) => Number(value) >= 1920 && Number(value) <= 2002,
-    iyr: (value) => Number(value) >= 2010 && Number(value) <= 2020,
-    eyr: (value) => Number(value) >= 2020 && Number(value) <= 2030,
+    byr: inRange(1920, 2002),
+    iyr: inRange(2010, 2020),
+    eyr: inRange(2020, 2030),
     hgt: (value) => {
       if (!value || !/cm|in/.test(value)) return false
       const { groups: { inch, cm, } } = value.match(/^((?<inch>\d+)in)|((?<cm>\d+)cm)/);
       if (cm) {
-      return Number(cm) >= 150 && Number(cm) <= 193;
+        return inRange(150, 193)(cm);
       }
       if (inch) {
-        return Number(inch) >= 59 && Number(inch) <= 76;
+        return inRange(59, 76)(inch);
       }
       return false;
     },
@@ -51,10 +53,9 @@ const fetchData = require('../fetchData');
     .reduce((validCount, missingKeys) => missingKeys.length === 0 ? validCount + 1 : validCount, 0)
 
   const part1 = findValidPassports(noValidation);
+  console.log('(Part 1) number of validPassports: ', part1);
+
   const part2 = findValidPassports(strictValidation);
-
-    console.log('(Part 1) number of validPassports: ', part1);
-
-    console.log('(Part 2) number of validPassports: ', part2);
+  console.log('(Part 2) number of validPassports: ', part2);
 })();
 
