@@ -67,11 +67,12 @@ const fetchData = require('../fetchData');
     [row]: rows[row] ? [...rows[row], column] : [column],
   }), {});
 
-  const findMissingSeats = (obj) =>
-    Object.entries(obj).filter(([_, column]) => column.length < (startColumn[1] + 1) )
+  const rowIsMissingSeats = column => column.length < (startColumn[1] + 1)
+  const rowIsSurrounded = (rows, rowNo) => rows[Number(rowNo) + 1] && rows[Number(rowNo) - 1]
 
-  const filterBackAndFrontSeats = (arr) =>
-    arr.find(([rowNo]) => !/(0|3|105)/.test(rowNo));
+  const findMissingSeats = (obj) =>
+    Object.entries(obj)
+      .find(([rowNo, column]) => rowIsMissingSeats(column) && rowIsSurrounded(obj, rowNo));
 
   const getPostionOfMissingSeat = ([rowNo, columns]) => ({
     row: rowNo,
@@ -83,10 +84,10 @@ const fetchData = require('../fetchData');
     map(findSeat),
     sortPlane,
     findMissingSeats,
-    filterBackAndFrontSeats,
     getPostionOfMissingSeat,
     getSeatId,
   );
 
   console.log('(Part 2) my seat ID is: ', part2(data));
+
 })();
