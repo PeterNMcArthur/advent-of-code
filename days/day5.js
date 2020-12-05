@@ -30,7 +30,7 @@ const fetchData = require('../fetchData');
     L: takeTopHalf,
   }
 
-  const findSeat = (positions) => positions.reduce((result, key) => ({
+  const getSeatPosition = (positions) => positions.reduce((result, key) => ({
     row: /F|B/.test(key) ? directionMap[key](result.row) : result.row,
     column: /R|L/.test(key) ? directionMap[key](result.column) : result.column,
   }), {
@@ -38,10 +38,16 @@ const fetchData = require('../fetchData');
     column: startColumn,
   });
 
-  const getSeatId = ({ row, column }) => (row[0] * 8) + column[0]
+  const getSeatId = ({ row, column }) => (row * 8) + column
+  const cleanSeatPostion = ({ row, column }) => ({ row: row[0], column: column[0] })
+
+  const findSeat = compose(
+    split(''),
+    getSeatPosition,
+    cleanSeatPostion
+  );
 
   const findSeatId = compose(
-    split(''),
     findSeat,
     getSeatId,
   );
@@ -56,4 +62,31 @@ const fetchData = require('../fetchData');
 
   console.log('(Part 1) highest seat ID: ', part1(data));
 
+  const sortPlane = (seats) => seats.reduce((rows, {row, column}) => ({
+    ...rows,
+    [row]: rows[row] ? [...rows[row], column] : [column],
+  }), {});
+
+  const findMissingSeats = (obj) =>
+    Object.entries(obj).filter(([_, column]) => column.length < (startColumn[1] + 1) )
+
+  const filterBackAndFrontSeats = (arr) =>
+    arr.find(([rowNo]) => !/(0|3|105)/.test(rowNo));
+
+  const getPostionOfMissingSeat = ([rowNo, columns]) => ({
+    row: rowNo,
+    column: columns.find(column => !columns.includes(column + 1)) + 1,
+  });
+
+  const part2 = compose(
+    split(/\n/),
+    map(findSeat),
+    sortPlane,
+    findMissingSeats,
+    filterBackAndFrontSeats,
+    getPostionOfMissingSeat,
+    getSeatId,
+  );
+
+  console.log('(Part 2) my seat ID is: ', part2(data));
 })();
