@@ -20,7 +20,13 @@ const split = require('../utils/split');
   )
 
   const formatData = compose(
+    x => x.replace(/(\n|\r|\s)+$/, ''),
     split(/\n\n/),
+    x => x.filter(x => x !== ''),
+    x => {
+      console.log(x)
+      return x
+    },
     map(split(/\n/)),
   );
 
@@ -36,6 +42,5 @@ const split = require('../utils/split');
     formatData,
     map(countEvery),
     x => x.reduce((sum, val) => sum + val, 0));
-
   console.log('(Part 2) sum of same groups answers is: ', part2(data));
 })();
