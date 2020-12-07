@@ -17,6 +17,8 @@ const map = require('../utils/map');
       }, null),
   );
 
+  console.log('(Part 1) sum of two products: ', part1(data));
+
   const part2 = compose(
     split(/\n/),
     map(x => Number(x)),
@@ -32,6 +34,5 @@ const map = require('../utils/map');
     null),
   );
 
-  console.log('(Part 1) sum of two products: ', part1(data));
   console.log('(Part 2) sum of three products: ', part2(data));
 })();
